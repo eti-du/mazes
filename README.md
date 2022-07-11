@@ -1,5 +1,5 @@
 # MAZES ???
 
-[changelog](/CHANGELOG.md)
+[CHANGELOG](/CHANGELOG.md)
 
-[ROADMAP](/ROADMAP.md)
+[FEATURES](/FEATURES.md)
