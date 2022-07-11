@@ -110,7 +110,7 @@ def main_function(window, window_size, maze, init_pos):
         pygame.display.update()
 
         mouse_mov = pygame.mouse.get_pos()
-        x_mouse_mov = mouse_mov[0]-window_size[0]//2,mouse_mov[1]-window_size[1]//2
+        x_mouse_mov = mouse_mov[0]-window_size[0]//2
 
         temp = x_direc
         x_direc = x_direc * cos(-speed_turn*x_mouse_mov)-y_direc*sin(-speed_turn*x_mouse_mov)
@@ -128,15 +128,15 @@ def main_function(window, window_size, maze, init_pos):
 
 
 #$ good god it's with this kind of parameters quantity that i miss static typing....
-def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_h, wei):
+def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_height, window_width):
     from maze.color import color_list
 
     pygame.Surface.fill(window,(0,0,0))
-    pygame.draw.rect(window,(25,45,125),(0,0,wei,window_h//2))
+    pygame.draw.rect(window,(25,45,125),(0,0,window_width,window_height//2))
 
 
-    for i in range(wei):
-        camera_x = 2*i / wei-1
+    for i in range(window_width):
+        camera_x = 2*i / window_width-1
 
         #? parentheses added for ease of reading
         raydirec_x, raydirec_y = (x_direc + x_plane * camera_x), (y_direc + y_plane * camera_x)
@@ -156,7 +156,6 @@ def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_
 
         pas_x, pas_y = 0,0
 
-        #What's that ? -- to fix
         walltouch = False
         side = 0
 
@@ -191,17 +190,17 @@ def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_
             wall_distance = side_dist_y - ddista_y
 
         if wall_distance == 0:
-            height_line = window_h
+            height_line = window_height
         else:
-            height_line = window_h / wall_distance
-        start_point = -height_line / 2 + window_h / 2
+            height_line = window_height / wall_distance
+        start_point = -height_line / 2 + window_height / 2
 
         if start_point < 1:
             start_point = 1
-        end_point = height_line / 2 + window_h / 2
+        end_point = height_line / 2 + window_height / 2
 
-        if end_point >= window_h:
-            end_point = window_h - 1
+        if end_point >= window_height:
+            end_point = window_height - 1
         color = color_list[maze[0][map_y][map_x]-1]
 
         if side == 1:
@@ -210,7 +209,7 @@ def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_
 
         pygame.draw.line(window, color, (i,start_point), (i,end_point), width=1)
 
-    pygame.draw.circle(window, (200,200,200), (wei // 2, window_h // 2), 3)
+    pygame.draw.circle(window, (200,200,200), (window_width // 2, window_height // 2), 3)
     pygame.display.update()
 
     '''

@@ -9,7 +9,7 @@ def ui_mazechoice(window, window_size):
         def __init__(self,jsonc) -> None:
             self.dict = json.loads(jsonc)
 
-            for key in self.dict.items():
+            for key,val in self.dict.items():
                 exec("self." + str(key) + "= val")
 
 
