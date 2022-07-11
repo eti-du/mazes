@@ -41,6 +41,8 @@ Features and other elements to be implemented.
 - [Graphics](#graphics)
     - *e.g.* textures
 
+&nbsp;
+
 ## Ending
 
 Victory, along with it's proper screen.
