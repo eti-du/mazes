@@ -77,10 +77,12 @@ class main():
                 if (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.65) < event.pos[1] < (window_size[1] * 0.65 + 70):
                     pygame.draw.rect(window, (100,130,140), [0, 0, window_size[0], window_size[1]],0)
 
+                    #open the file where is locate the default maze
                     with open("asset\mazes\_default_maze_.json","r") as file:
                         content = eval(file.read())
-
+                    #waiting the player finish the maze
                     lab.main_function(window,window_size, content['maze'], content['init_position'], content['end_position']) == True
+                    #show the menu
                     show_menu(pygame,window,window_size,font,font1)
                 #Same for "Choose maze"
                 elif (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.75) < event.pos[1] < (window_size[1] * 0.75 + 70):

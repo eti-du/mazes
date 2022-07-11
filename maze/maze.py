@@ -24,6 +24,8 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
     draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0])
 
+    font = pygame.font.Font(pygame.font.get_default_font(), 50)
+
     #play the musics
     pygame.mixer.music.load("asset\music\\ambient_1.ogg")
     pygame.mixer.music.play(loops=1, start=0.0, fade_ms=10000)
@@ -126,10 +128,16 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
         #check if the player found the end
         if int(x_ply) == end_pos['x'] and int(y_ply) == end_pos['y']:
+            pygame.time.wait(2000)          #pause for 2"
             pygame.mixer.music.stop()       #stop the music
             pygame.mouse.set_visible(True)  #show the cursor
+            #show "congratulation" on a blue background
+            pygame.Surface.fill(window,(100,130,140))
+            window.blit(pygame.font.Font('freesansbold.ttf', 120).render("Congratulation", True, (245, 215, 20)), (window_size[0]//3,window_size[1]//3))
+            pygame.display.update()
+            pygame.time.wait(6000)          #pause for 6"
             loop = False
-            return True
+            return True                     #quit the maze
         cl.tick(30)
 
 
