@@ -45,8 +45,9 @@ def ui_mazechoice(window, window_size):
             elif event.type == pygame.MOUSEBUTTONUP:
                 if (event.pos[1]-20) // 60 < len(fileslist):
                     loop = False
+                    fi = fileslist[(event.pos[1]-20) // 60]#find the right file
                     #launch the maze
-                    lab.main_function(window, window_size, fileslist[(event.pos[1]-20) // 60].maze, fileslist[(event.pos[1]-20) // 60].init_position)
+                    lab.main_function(window, window_size, fi.maze, fi.init_position, fi.end_position)
 
         cl.tick(60)
     pygame.quit()

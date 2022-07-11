@@ -49,21 +49,22 @@ class main():
 
 
     #menu creation
-    pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)#fill the window in red
+    def show_menu(pygame,window,window_size,font,font1):
+        pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)#fill the window in red
 
-    pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.65, 400, 70],0)
-    pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.75, 400, 70],0)
-    pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.85, 400, 70],0)
-
-
-    window.blit(font.render("Mazes ???", True, (85,100,240)),(window_size[0]//2-75*5,window_size[1]//4))
-    window.blit(font1.render("Play", True, (85,100,240)),(window_size[0]//2-60,window_size[1]*0.65+10))
-    window.blit(font1.render("Choose maze", True, (85,100,240)),(window_size[0]//2-170,window_size[1]*0.75+10))
-    window.blit(font1.render("Random maze", True, (85,100,240)),(window_size[0]//2-170,window_size[1]*0.85+10))
-
-    pygame.display.update()
+        pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.65, 400, 70],0)
+        pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.75, 400, 70],0)
+        pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.85, 400, 70],0)
 
 
+        window.blit(font.render("Mazes ???", True, (85,100,240)),(window_size[0]//2-75*5,window_size[1]//4))
+        window.blit(font1.render("Play", True, (85,100,240)),(window_size[0]//2-60,window_size[1]*0.65+10))
+        window.blit(font1.render("Choose maze", True, (85,100,240)),(window_size[0]//2-170,window_size[1]*0.75+10))
+        window.blit(font1.render("Random maze", True, (85,100,240)),(window_size[0]//2-170,window_size[1]*0.85+10))
+
+        pygame.display.update()
+
+    show_menu(pygame,window,window_size,font,font1)
     #wait until the player click on a button 
     while loop:
         for event in pygame.event.get():
@@ -75,13 +76,12 @@ class main():
                 #Test if the player clicked on "play"
                 if (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.65) < event.pos[1] < (window_size[1] * 0.65 + 70):
                     pygame.draw.rect(window, (100,130,140), [0, 0, window_size[0], window_size[1]],0)
-                    loop = False
 
                     with open("asset\mazes\_default_maze_.json","r") as file:
                         content = eval(file.read())
 
-                    lab.main_function(window,window_size, content['maze'], content['init_position'])
-
+                    lab.main_function(window,window_size, content['maze'], content['init_position'], content['end_position']) == True
+                    show_menu(pygame,window,window_size,font,font1)
                 #Same for "Choose maze"
                 elif (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.75) < event.pos[1] < (window_size[1] * 0.75 + 70):
                     pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)

@@ -3,7 +3,7 @@ from math import cos, sin
 
 
 
-def main_function(window, window_size, maze, init_pos):
+def main_function(window, window_size, maze, init_pos, end_pos):
     pygame.draw.rect(window, (125,255,129), [0, 0, window_size[0], window_size[1]], 0)
     pygame.display.update()
 
@@ -122,7 +122,14 @@ def main_function(window, window_size, maze, init_pos):
 
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0]) 
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0])
+
+        #check if the player found the end
+        if int(x_ply) == end_pos['x'] and int(y_ply) == end_pos['y']:
+            pygame.mixer.music.stop()       #stop the music
+            pygame.mouse.set_visible(True)  #show the cursor
+            loop = False
+            return True
         cl.tick(30)
 
 
