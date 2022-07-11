@@ -10,8 +10,8 @@ def main_function(window, window_size, maze, init_pos):
     loop = True
     cl = pygame.time.Clock()
 
-    x_ply,y_ply,z_ply = init_pos['x'],init_pos['y'],init_pos['z']
-    x_direc,y_direc = -1,0
+    x_ply,y_ply,z_ply = init_pos['x'],init_pos['y'],init_pos['z']# repectively the position x,y,z of the player
+    x_direc,y_direc = -1,0#x_direc + y_direc give the direction of the player
     x_plane,y_plane = 0,0.66
 
     #time,oldtime = 0,0 #? defunt, use FPS instead
@@ -24,9 +24,11 @@ def main_function(window, window_size, maze, init_pos):
 
     draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0])
 
+    #play the musics
     pygame.mixer.music.load("asset\music\\ambient_1.ogg")
     pygame.mixer.music.play(loops=1, start=0.0, fade_ms=10000)
 
+    #Init
     pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
     pygame.mouse.set_visible(False)
 
