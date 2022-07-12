@@ -4,125 +4,152 @@ from math import cos, sin
 
 
 def main_function(window, window_size, maze, init_pos):
-    pygame.draw.rect(window, (125,255,129), [0, 0, window_size[0], window_size[1]], 0)
-    pygame.display.update()
-
     loop = True
     cl = pygame.time.Clock()
 
-    x_ply,y_ply,z_ply = init_pos['x'],init_pos['y'],init_pos['z']# repectively the position x,y,z of the player
-    x_direc,y_direc = -1,0#(x_direc,y_direc) is the direction vectors of the direction of the player
-    x_plane,y_plane = 0,0.66#the straight line normal to (x_direc,y_direc)
+    #? what does this do?
+    pygame.draw.rect(window, (125,255,129), [0, 0, window_size[0], window_size[1]], 0)
+    pygame.display.update()
 
-    #time,oldtime = 0,0 #? defunt, use FPS instead
+    #WHYNOT: remove z_ply? it seems unused
+    x_ply, y_ply, z_ply = init_pos['x'],init_pos['y'],init_pos['z']   #player's position on the X, Y and Z axes
+    x_direc, y_direc = -1, 0                                          #the (x_direc, y_direc) tuple is the player's direction vector
+    x_plane, y_plane = 0, 0.66                                        #the straight line normal to (x_direc, y_direc)
+
+    #time,oldtime = 0,0 #? defunct, use FPS instead
 
     speed_mov = 0.03
     speed_turn = 0.002
 
-    #? HOLY MAGIC POWERS, DO NOT TEMPER WITH UNLESS PROPERLY TRAINED
-    dev_mod = False
+    #! HOLY MAGIC POWERS, DO NOT TEMPER WITH UNLESS PROPERLY TRAINED
+    dev_mode = False
 
-    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0])
+    #? what exactly is the purpose of this thing?
+    #? it doesn't seem to change anything when disabled
+    draw(window,
+        x_ply, y_ply,
+        x_direc, y_direc,
+        x_plane, y_plane,
+        maze,
+        window_size[1], window_size[0])
 
-    #play the musics
-    pygame.mixer.music.load("asset\music\\ambient_1.ogg")
-    pygame.mixer.music.play(loops=1, start=0.0, fade_ms=10000)
+    #plays the ambient music
+    pygame.mixer.music.load(R"asset\music\ambient_1.ogg")
+    pygame.mixer.music.play(loops = 1, start = 0.0, fade_ms = 10000)
 
-    pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
+    #? i imagine this hides and locks the mouse to the inside of the window?
+    pygame.mouse.set_pos([window_size[0]//2, window_size[1]//2])
     pygame.mouse.set_visible(False)
 
+    #? i imagine this sets the time needed to repeat an input (e.g. moving forward)?
     pygame.key.set_repeat(10)
     pygame.time.delay(1000)
 
+
+
+    #? I'm not exactly sure of what was done there.
+    #? would be nice of someone to comment this all plz
     while loop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 loop = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                #remove a wall if dev_mod == True and left click
-                if dev_mod:
+                #removes a wall by left-clicking when in dev mode
+                if dev_mode:
                     i = 1
-                    while i<10 and maze[0][int(y_ply + y_direc * i)][int(x_ply + x_direc * i)] == 0:
-                        i += 0.1
 
-                    if 0<int(y_ply + y_direc * i)<len(maze[0])-1 and 0<int(x_ply + x_direc * i)<len(maze[0][int(y_ply + y_direc * i)])-1:
-                        maze[0][int(y_ply + y_direc * i)][int(x_ply + x_direc * i)] = 0
+                    while i < 10 and maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] == 0:
+                        i += 0.1
+                    if 0 < int(y_ply + y_direc*i)<len(maze[0]) - 1 and 0 < int(x_ply + x_direc*i) < len(maze[0][int(y_ply + y_direc*i)]) - 1:
+                        maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] = 0
 
 
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-                #place a wall if dev_mod == True and right click
-                if dev_mod:
+                #places a wall by right-clicking when in dev mode
+                if dev_mode:
                     i = 0.5
-                    while i<10 and maze[0][int(y_ply + y_direc * i)][int(x_ply + x_direc * i)] == 0:
+                    while i < 10 and maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] == 0:
                         i += 0.1
                     i -= 0.1
                     maze[0][int(y_ply + y_direc * i)][int(x_ply + x_direc * i)] = 5
 
 
-            #move the player when 'z','q','s' or 'd' is pressed
-            elif event.type == pygame.KEYDOWN:  #pygame methode event.type only give one key
-                if event.key == pygame.K_UP or  event.key == pygame.K_z:
-                    if maze[0][int(y_ply)][int(x_ply + x_direc * speed_mov)]  == 0:
-                        x_ply += x_direc * speed_mov
+            #moves the player accordingly when pressing 'Z', 'Q', 'S' or 'D'
+            #? pygame methode event.type only gives one key does that
+            #? but does that mean it only PARSES one key as an arument? or that it only RETURNS one key?
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_z:
+                    if maze[0][int(y_ply)][int(x_ply + x_direc*speed_mov)] == 0:
+                        x_ply += x_direc*speed_mov
 
-                    if maze[0][int(y_ply + y_direc * speed_mov)][int(x_ply)]  == 0:
-                        y_ply += y_direc * speed_mov
+                    if maze[0][int(y_ply + y_direc*speed_mov)][int(x_ply)] == 0:
+                        y_ply += y_direc*speed_mov
 
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    if maze[0][int(y_ply)][int(x_ply + y_direc * speed_mov)]  == 0:
-                        x_ply += y_direc * (speed_mov * 0.5)
+                    if maze[0][int(y_ply)][int(x_ply + y_direc*speed_mov)] == 0:
+                        x_ply += y_direc*(speed_mov*0.5)
 
-                    if maze[0][int(y_ply - x_direc * speed_mov)][int(x_ply)]  == 0:
-                        y_ply -= x_direc * (speed_mov * 0.5)
+                    if maze[0][int(y_ply - x_direc*speed_mov)][int(x_ply)] == 0:
+                        y_ply -= x_direc*(speed_mov*0.5)
 
 
 
                 elif event.key == pygame.K_LEFT or event.key == pygame.K_q:
-                    if maze[0][int(y_ply)][int(x_ply - y_direc * speed_mov)]  == 0:
-                        x_ply -= y_direc * (speed_mov * 0.5)
+                    if maze[0][int(y_ply)][int(x_ply - y_direc*speed_mov)] == 0:
+                        x_ply -= y_direc*(speed_mov*0.5)
 
-                    if maze[0][int(y_ply + x_direc * speed_mov)][int(x_ply)]  == 0:
-                        y_ply += x_direc * (speed_mov * 0.5)
+                    if maze[0][int(y_ply + x_direc*speed_mov)][int(x_ply)] == 0:
+                        y_ply += x_direc*(speed_mov*0.5)
 
 
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    if maze[0][int(y_ply)][int(x_ply - x_direc * speed_mov)]  == 0:
-                        x_ply -= x_direc * speed_mov
+                    if maze[0][int(y_ply)][int(x_ply - x_direc*speed_mov)] == 0:
+                        x_ply -= x_direc*speed_mov
 
-                    if maze[0][int(y_ply - y_direc * speed_mov)][int(x_ply)]  == 0:
-                        y_ply -= y_direc * speed_mov
+                    if maze[0][int(y_ply - y_direc*speed_mov)][int(x_ply)] == 0:
+                        y_ply -= y_direc*speed_mov
 
 
                 if event.key == pygame.K_ESCAPE:
                     loop = False
 
-
-                if not dev_mod and event.key == pygame.K_F7:
-                    dev_mod = True
-                    print("dev mod activate")
+                if not dev_mode and event.key == pygame.K_F7:
+                    dev_mode = True
+                    print("DEV MODE STATUS\t:\tACTIVATED\nOBJECTIVE\t:\tKILL")
+                if dev_mode and event.key == pygame.K_F7:
+                    dev_mode = False
+                    print("DEV MODE STATUS\t:\tDEACTIVATED")
 
 
 
         pygame.display.update()
 
         mouse_mov = pygame.mouse.get_pos()
-        x_mouse_mov = mouse_mov[0]-window_size[0]//2
+        x_mouse_mov = mouse_mov[0] - window_size[0]//2
 
         #turn the direction of the player when the mouse is moved
         temp = x_direc
-        x_direc = x_direc * cos(-speed_turn*x_mouse_mov)-y_direc*sin(-speed_turn*x_mouse_mov)
-        y_direc = temp * sin(-speed_turn*x_mouse_mov) + y_direc * cos(-speed_turn*x_mouse_mov)
+        x_direc = x_direc*cos(-speed_turn*x_mouse_mov) - y_direc*sin(-speed_turn*x_mouse_mov)
+        y_direc = temp*sin(-speed_turn*x_mouse_mov) + y_direc*cos(-speed_turn*x_mouse_mov)
+
         #turn the 'plane' vector
         temp = x_plane
-        x_plane = x_plane * cos(-speed_turn*x_mouse_mov) - y_plane * sin(-speed_turn*x_mouse_mov)
-        y_plane = temp * sin(-speed_turn*x_mouse_mov) + y_plane * cos(-speed_turn*x_mouse_mov)
+        x_plane = x_plane*cos(-speed_turn*x_mouse_mov) - y_plane*sin(-speed_turn*x_mouse_mov)
+        y_plane = temp*sin(-speed_turn*x_mouse_mov) + y_plane*cos(-speed_turn*x_mouse_mov)
 
+    #? i imagine this hides and locks the mouse to the inside of the window?
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0]) 
+        draw(window,
+            x_ply, y_ply,
+            x_direc, y_direc,
+            x_plane, y_plane,
+            maze,
+            window_size[1],window_size[0])
+
         cl.tick(30)
 
 
@@ -135,19 +162,28 @@ def main_function(window, window_size, maze, init_pos):
 #x_plane, y_plane {float},{float} the 'plane' vector
 #maze {list} the "map" of the maze
 #window_height, window_width {int},{int} the dimension of the screen
-def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_height, window_width):
+def draw(window,
+        x_ply, y_ply,
+        x_direc, y_direc,
+        x_plane, y_plane,
+        maze,
+        window_height, window_width):
+
     from maze.color import color_list
 
-    #draw the floor and the ceiling
-    pygame.Surface.fill(window,(0,0,0))
-    pygame.draw.rect(window,(25,45,125),(0,0,window_width,window_height//2))
+    #draws the floor and the ceiling
+    pygame.Surface.fill(window,(0,0,0))#floor
+    pygame.draw.rect(window,
+                    (25,45,125),
+                    (0,0, window_width, window_height//2))
 
-    #for every pixel this loop will draw a line. The lengh of the line match the distance from the player of the wall
+    #for every pixel this loop will draw a line.
+    #The length of the line matches the distance from the player to the wall
     for i in range(window_width):
-        camera_x = 2*i / window_width-1
+        camera_x = 2*i/window_width - 1
 
         #? parentheses added for ease of reading
-        raydirec_x, raydirec_y = (x_direc + x_plane * camera_x), (y_direc + y_plane * camera_x)
+        raydirec_x, raydirec_y = (x_direc + x_plane*camera_x), (y_direc + y_plane*camera_x)
 
         map_x, map_y = int(x_ply), int(y_ply)
         side_dist_x, side_dist_y = 0,0

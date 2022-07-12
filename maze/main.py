@@ -31,7 +31,7 @@ class main():
     pygame.init()
 
 
-    window_size = pygame.display.get_desktop_sizes()[0] #grab the size of the screen
+    window_size = pygame.display.get_desktop_sizes()[0] #gets the screen dimensions(?)
     window = pygame.display.set_mode(window_size)
     pygame.display.set_caption("| Labyrinth |")
 
