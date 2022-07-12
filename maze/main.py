@@ -93,7 +93,8 @@ class main():
                 #Same for "Random maze"
                 elif (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.85) < event.pos[1] < (window_size[1] * 0.85 + 70):
                     loop = False
-                    lab.main_function(window, window_size, lab_gen(10,10).maze, {"x":3,"y":3,"z":0})#generate a random maze then launch it
+                    maze = lab_gen(10,10).maze
+                    lab.main_function(window, window_size, maze, {"x":1,"y":1,"z":0}, {"x":len(maze[0][1])-2,"y":len(maze[0])-2,"z":0})#generate a random maze then launch it
 
         cl.tick(60)
     pygame.quit()

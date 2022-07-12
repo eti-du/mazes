@@ -22,9 +22,10 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #? HOLY MAGIC POWERS, DO NOT TEMPER WITH UNLESS PROPERLY TRAINED
     dev_mod = False
 
-    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0])
-
     font = pygame.font.Font(pygame.font.get_default_font(), 50)
+    font_dev = pygame.font.Font(pygame.font.get_default_font(), 20)
+
+    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mod,font_dev)
 
     #play the musics
     pygame.mixer.music.load("asset\music\\ambient_1.ogg")
@@ -108,8 +109,6 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
 
 
-        pygame.display.update()
-
         mouse_mov = pygame.mouse.get_pos()
         x_mouse_mov = mouse_mov[0]-window_size[0]//2
 
@@ -124,7 +123,9 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0])
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mod,font_dev)
+
+            
 
         #check if the player found the end
         if int(x_ply) == end_pos['x'] and int(y_ply) == end_pos['y']:
@@ -133,7 +134,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
             pygame.mouse.set_visible(True)  #show the cursor
             #show "congratulation" on a blue background
             pygame.Surface.fill(window,(100,130,140))
-            window.blit(pygame.font.Font('freesansbold.ttf', 120).render("Congratulation", True, (245, 215, 20)), (window_size[0]//3,window_size[1]//3))
+            window.blit(pygame.font.Font('freesansbold.ttf', 120).render("Congratulation", True, (245, 215, 20)), (window_size[0]//4,window_size[1]//3))
             pygame.display.update()
             pygame.time.wait(6000)          #pause for 6"
             loop = False
@@ -150,7 +151,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 #x_plane, y_plane {float},{float} the 'plane' vector
 #maze {list} the "map" of the maze
 #window_height, window_width {int},{int} the dimension of the screen
-def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_height, window_width):
+def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_height, window_width,dev_mod,font_dev):
     from maze.color import color_list
 
     #draw the floor and the ceiling
@@ -239,6 +240,10 @@ def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_
         pygame.draw.line(window, color, (i,start_point), (i,end_point), width=1)
     #draw the small circle at the center of the screen
     pygame.draw.circle(window, (200,200,200), (window_width // 2, window_height // 2), 3)
+
+    if dev_mod:
+        window.blit(font_dev.render("x : " + str(x_ply), True, (245, 245, 245)), (20,20))
+        window.blit(font_dev.render("y : " + str(y_ply), True, (245, 245, 245)), (20,50))
     pygame.display.update()
 
     '''
