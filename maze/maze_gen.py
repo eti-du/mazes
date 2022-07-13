@@ -59,7 +59,6 @@ class lab_gen:
                 #if so, stop the loop
                 break
         self.const()
-        print(self.maze)
 
 
     #change all @old_num by @new_num

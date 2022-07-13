@@ -139,7 +139,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
             pygame.display.update()
             pygame.time.wait(6000)          #pause for 6"
             loop = False
-            return True                     #quit the maze
+            return                          #quit the maze
         cl.tick(30)
 
 

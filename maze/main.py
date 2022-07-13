@@ -70,8 +70,6 @@ class main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 loop = False
-                pygame.quit()
-
             elif event.type == pygame.MOUSEBUTTONUP:
                 #Test if the player clicked on "play"
                 if (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.65) < event.pos[1] < (window_size[1] * 0.65 + 70):
@@ -81,20 +79,18 @@ class main():
                     with open("asset\mazes\_default_maze_.json","r") as file:
                         content = eval(file.read())
                     #waiting the player finish the maze
-                    lab.main_function(window,window_size, content['maze'], content['init_position'], content['end_position']) == True
-                    #show the menu
-                    show_menu(pygame,window,window_size,font,font1)
+                    lab.main_function(window,window_size, content['maze'], content['init_position'], content['end_position'])
                 #Same for "Choose maze"
                 elif (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.75) < event.pos[1] < (window_size[1] * 0.75 + 70):
-                    pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)
-                    loop = False
-                    ui_choice.ui_mazechoice(window,window_size)#launch the other menu
+                    #launch the other menu
+                    ui_choice.ui_mazechoice(window,window_size)
 
                 #Same for "Random maze"
                 elif (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.85) < event.pos[1] < (window_size[1] * 0.85 + 70):
-                    loop = False
+                    #generate a random maze then launch it
                     maze = lab_gen(10,10).maze
-                    lab.main_function(window, window_size, maze, {"x":1,"y":1,"z":0}, {"x":len(maze[0][1])-2,"y":len(maze[0])-2,"z":0})#generate a random maze then launch it
-
+                    lab.main_function(window, window_size, maze, {"x":1,"y":1,"z":0}, {"x":len(maze[0][1])-2,"y":len(maze[0])-2,"z":0})
+                # show the menu
+                show_menu(pygame,window,window_size,font,font1)
         cl.tick(60)
     pygame.quit()
