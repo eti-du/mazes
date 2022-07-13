@@ -58,20 +58,22 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #? I'm not exactly sure of what was done there.
     #? would be nice of someone to comment this all plz
     while loop:
+        #grab all event and execute the for loop for each event
         for event in pygame.event.get():
+            #in case the player use the red cross to close the window
             if event.type == pygame.QUIT:
                 loop = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 #removes a wall by left-clicking when in dev mode
                 if dev_mode:
-                    i = 1
-
+                    i = 0.5
+                    #launch a ray from the player, while there is no walls continu, if the ray hit a wall remove it
                     while i < 10 and maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] == 0:
                         i += 0.1
+                    #check if the wall isn't on the edge
                     if 0 < int(y_ply + y_direc*i)<len(maze[0]) - 1 and 0 < int(x_ply + x_direc*i) < len(maze[0][int(y_ply + y_direc*i)]) - 1:
                         maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] = 0
-
 
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
@@ -80,8 +82,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
                     i = 0.5
                     while i < 10 and maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] == 0:
                         i += 0.1
-                    i -= 0.1
-                    maze[0][int(y_ply + y_direc * i)][int(x_ply + x_direc * i)] = 5
+                    maze[0][int(y_ply + y_direc * (i-0.1))][int(x_ply + x_direc * (i-0.1))] = 5
 
 
             #moves the player accordingly when pressing 'Z', 'Q', 'S' or 'D'
@@ -128,7 +129,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
                 if not dev_mode and event.key == pygame.K_F7:
                     dev_mode = True
                     print("DEV MODE STATUS\t:\tACTIVATED\nOBJECTIVE\t:\tKILL")
-                if dev_mode and event.key == pygame.K_F7:
+                elif dev_mode and event.key == pygame.K_F7:
                     dev_mode = False
                     print("DEV MODE STATUS\t:\tDEACTIVATED")
 
