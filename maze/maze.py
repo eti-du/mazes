@@ -36,7 +36,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #? it doesn't seem to change anything when disabled
     #$ it was just to show the maze a first time before the list of loading things that take some time
     #$ it allow to give the impression that the game is ready when it's not the case
-    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mod,font_dev)
+    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev)
 
 
     #plays the ambient music
@@ -153,7 +153,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mod,font_dev)
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev)
 
             
 
@@ -188,7 +188,8 @@ def draw(window,
         x_direc, y_direc,
         x_plane, y_plane,
         maze,
-        window_height, window_width):
+        window_height, window_width,
+        dev_mode,font_dev):
 
     from maze.color import color_list
 
@@ -282,7 +283,7 @@ def draw(window,
     #draw the small circle at the center of the screen
     pygame.draw.circle(window, (200,200,200), (window_width // 2, window_height // 2), 3)
 
-    if dev_mod:
+    if dev_mode:
         window.blit(font_dev.render("x : " + str(round(x_ply,2)), True, (245, 245, 245)), (20,20))
         window.blit(font_dev.render("y : " + str(round(y_ply,2)), True, (245, 245, 245)), (20,50))
     pygame.display.update()
