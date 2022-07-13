@@ -49,54 +49,48 @@ class main():
 
 
     #menu creation
-    #draws the background (solid color)
-    pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)
+    def show_menu(pygame,window,window_size,font,font1):
+        #draws the background (solid color)
+        pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)
 
-    #buttons backgrounds/boxes
-    pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.65, 400, 70],0)#"Play" button box
-    pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.75, 400, 70],0)#maze selection button box
-    pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.85, 400, 70],0)#maze randomize button box
+        #buttons backgrounds/boxes
+        pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.65, 400, 70],0)#"Play" button box
+        pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.75, 400, 70],0)#maze selection button box
+        pygame.draw.rect(window, (40,30,100), [window_size[0]//2-200, window_size[1]*0.85, 400, 70],0)#maze randomize button box
 
-    #Title
-    window.blit(font.render("Mazes ???",
-                            True,
+
+        #Title
+        window.blit(font.render("Mazes ???",True,
+                           (85,100,240)),
+                           (window_size[0]//2 - 75*5,window_size[1]//4))
+
+        #buttons labels
+        #"Play" button label
+        window.blit(font1.render("Play",True,
                             (85,100,240)),
-                (window_size[0]//2 - 75*5,
-                window_size[1]//4))
+                            (window_size[0]//2 - 60,window_size[1]*0.65 + 10))
 
-    #buttons labels
-    #"Play" button label
-    window.blit(font1.render("Play",
-                            True,
+        #maze selection button label
+        window.blit(font1.render("Choose maze",True,
                             (85,100,240)),
-                (window_size[0]//2 - 60,
-                window_size[1]*0.65 + 10))
+                            (window_size[0]//2 - 170,window_size[1]*0.75 + 10))
 
-    #maze selection button label
-    window.blit(font1.render("Choose maze",
-                            True,
-                            (85,100,240)),
-                (window_size[0]//2 - 170,
-                window_size[1]*0.75 + 10))
+        #maze randomizer button label
+        window.blit(font1.render("Random maze",True,
+                                (85,100,240)),
+                                (window_size[0]//2 - 170,window_size[1]*0.85 + 10))
 
-    #maze randomizer button label
-    window.blit(font1.render("Random maze",
-                            True,
-                            (85,100,240)),
-                (window_size[0]//2 - 170,
-                window_size[1]*0.85 + 10))
+        pygame.display.update()#what does this exactly do? $ -It refresh the display, the changement above aren't yet show until this fonction is called
+    
 
-
-    pygame.display.update()#what does this exactly do?
-
+    show_menu(pygame,window,window_size,font,font1)
 
     #wait until the player clicks on a button
+    
     while loop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 loop = False
-                pygame.quit()
-
             elif event.type == pygame.MOUSEBUTTONUP:
                 """
                 Tests if the player clicked on "Play"
@@ -110,30 +104,29 @@ class main():
                 """
                 if (window_size[0]//2 - 200) < event.pos[0] < (window_size[0]//2 + 400) and (window_size[1]*0.65) < event.pos[1] < (window_size[1]*0.65 + 70):
                     pygame.draw.rect(window, (100,130,140), [0, 0, window_size[0], window_size[1]],0)
-                    loop = False
 
+                    #open the file where is locate the default maze
                     with open("asset\mazes\_default_maze_.json","r") as file:
                         content = eval(file.read())
 
-                    lab.main_function(window,window_size, content['maze'], content['init_position'])
-
-
+                    #waiting the player finish the maze
+                    lab.main_function(window,window_size, content['maze'], content['init_position'], content['end_position'])
                 #Same for "Choose maze"
-                elif (window_size[0]//2 - 200) < event.pos[0] < (window_size[0]//2 + 400) and (window_size[1]*0.75) < event.pos[1] < (window_size[1]*0.75 + 70):
-                    pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)
-                    loop = False
+                elif (window_size[0] // 2 - 200) < event.pos[0] < (window_size[0] // 2 + 400) and (window_size[1] * 0.75) < event.pos[1] < (window_size[1] * 0.75 + 70):
                     ui_choice.ui_mazechoice(window,window_size)#launches the maze selection menu
-
 
                 #Same for "Random maze"
                 elif (window_size[0]//2 - 200) < event.pos[0] < (window_size[0]//2 + 400) and (window_size[1]*0.85) < event.pos[1] < (window_size[1]*0.85 + 70):
-                    loop = False
-
                     #generates a random maze and then launches it
-                    lab.main_function(window, window_size, lab_gen(10,10).maze, {"x":3,"y":3,"z":0})
-
-
+                    maze = lab_gen(10,10).maze
+                    lab.main_function(window, window_size, maze, {"x":1,"y":1,"z":0}, {"x":len(maze[0][1])-2,"y":len(maze[0])-2,"z":0})
+                # show the menu
+                show_menu(pygame,window,window_size,font,font1)
+                   
         #µ is this useful? i thought we used fps instead?
         #µ i might be wrong on this one so don't hesitate to tell me
+        #µ FPS aren't yet used, 
+        #µ for this menu fps aren't required, we can use the fonction include in pygame
+        #µ though for the maze.py file it would be better to use fps
         cl.tick(60)
     pygame.quit()

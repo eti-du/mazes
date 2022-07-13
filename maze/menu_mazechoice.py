@@ -31,6 +31,7 @@ def ui_mazechoice(window, window_size):
                 fileslist.append(mazefile(file.read()))
 
     #show the list on the screen
+    pygame.draw.rect(window, (70,15,20), [0, 0, window_size[0], window_size[1]],0)
     for i in range (len(fileslist)):
             window.blit(font.render(fileslist[i].name, True, (200,200,200)),(50, i*60 + 20))
     pygame.display.update()
@@ -45,8 +46,9 @@ def ui_mazechoice(window, window_size):
             elif event.type == pygame.MOUSEBUTTONUP:
                 if (event.pos[1]-20) // 60 < len(fileslist):
                     loop = False
+                    fi = fileslist[(event.pos[1]-20) // 60]#find the right file
                     #launch the maze
-                    lab.main_function(window, window_size, fileslist[(event.pos[1]-20) // 60].maze, fileslist[(event.pos[1]-20) // 60].init_position)
+                    lab.main_function(window, window_size, fi.maze, fi.init_position, fi.end_position)
+                    return
 
         cl.tick(60)
-    pygame.quit()

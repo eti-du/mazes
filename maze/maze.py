@@ -3,15 +3,20 @@ from math import cos, sin
 
 
 
-def main_function(window, window_size, maze, init_pos):
-    loop = True
-    cl = pygame.time.Clock()
 
+def main_function(window, window_size, maze, init_pos, end_pos):
     #? what does this do?
+    #$ it fill the screen with green, it aim to be a 'loading screen', I think it's quite useless tho
     pygame.draw.rect(window, (125,255,129), [0, 0, window_size[0], window_size[1]], 0)
     pygame.display.update()
 
+    loop = True
+    cl = pygame.time.Clock()
+
+
     #WHYNOT: remove z_ply? it seems unused
+    #$ It's for anticipate a soon use of it,
+    #$ I think it's quite annoying that we cannot move the head up and down
     x_ply, y_ply, z_ply = init_pos['x'],init_pos['y'],init_pos['z']   #player's position on the X, Y and Z axes
     x_direc, y_direc = -1, 0                                          #the (x_direc, y_direc) tuple is the player's direction vector
     x_plane, y_plane = 0, 0.66                                        #the straight line normal to (x_direc, y_direc)
@@ -24,24 +29,27 @@ def main_function(window, window_size, maze, init_pos):
     #! HOLY MAGIC POWERS, DO NOT TEMPER WITH UNLESS PROPERLY TRAINED
     dev_mode = False
 
+    font = pygame.font.Font(pygame.font.get_default_font(), 50)
+    font_dev = pygame.font.Font(pygame.font.get_default_font(), 20)
+
     #? what exactly is the purpose of this thing?
     #? it doesn't seem to change anything when disabled
-    draw(window,
-        x_ply, y_ply,
-        x_direc, y_direc,
-        x_plane, y_plane,
-        maze,
-        window_size[1], window_size[0])
+    #$ it was just to show the maze a first time before the list of loading things that take some time
+    #$ it allow to give the impression that the game is ready when it's not the case
+    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mod,font_dev)
+
 
     #plays the ambient music
     pygame.mixer.music.load(R"asset\music\ambient_1.ogg")
     pygame.mixer.music.play(loops = 1, start = 0.0, fade_ms = 10000)
 
     #? i imagine this hides and locks the mouse to the inside of the window?
+    #µ yes it place the mouse to the center and hide it
     pygame.mouse.set_pos([window_size[0]//2, window_size[1]//2])
     pygame.mouse.set_visible(False)
 
     #? i imagine this sets the time needed to repeat an input (e.g. moving forward)?
+    #µ exactly
     pygame.key.set_repeat(10)
     pygame.time.delay(1000)
 
@@ -79,6 +87,7 @@ def main_function(window, window_size, maze, init_pos):
             #moves the player accordingly when pressing 'Z', 'Q', 'S' or 'D'
             #? pygame methode event.type only gives one key does that
             #? but does that mean it only PARSES one key as an arument? or that it only RETURNS one key?
+            #µ it returns only one key
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_z:
                     if maze[0][int(y_ply)][int(x_ply + x_direc*speed_mov)] == 0:
@@ -125,8 +134,6 @@ def main_function(window, window_size, maze, init_pos):
 
 
 
-        pygame.display.update()
-
         mouse_mov = pygame.mouse.get_pos()
         x_mouse_mov = mouse_mov[0] - window_size[0]//2
 
@@ -140,16 +147,29 @@ def main_function(window, window_size, maze, init_pos):
         x_plane = x_plane*cos(-speed_turn*x_mouse_mov) - y_plane*sin(-speed_turn*x_mouse_mov)
         y_plane = temp*sin(-speed_turn*x_mouse_mov) + y_plane*cos(-speed_turn*x_mouse_mov)
 
-    #? i imagine this hides and locks the mouse to the inside of the window?
+        #? i imagine this hides and locks the mouse to the inside of the window?
+        #µ the mouse is already hide with the instruction line 49
+        #µ the player can still move the mouse to move its direction
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
-        draw(window,
-            x_ply, y_ply,
-            x_direc, y_direc,
-            x_plane, y_plane,
-            maze,
-            window_size[1],window_size[0])
 
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mod,font_dev)
+
+            
+
+        #check if the player found the end
+        if int(x_ply) == end_pos['x'] and int(y_ply) == end_pos['y']:
+            pygame.mixer.music.stop()       #stop the music
+            pygame.time.wait(1000)          #pause for 1"
+            pygame.mouse.set_visible(True)  #show the cursor
+            #show "congratulation" on a blue background
+            pygame.Surface.fill(window,(100,130,140))
+            window.blit(pygame.font.Font('freesansbold.ttf', 120).render("Congratulation", True, (245, 215, 20)), (window_size[0]//4,window_size[1]//3))
+            window.blit(font.render("You find the exit of the maze !", True, (245, 215, 215)), (window_size[0]//4,window_size[1]//3+140))
+            pygame.display.update()
+            pygame.time.wait(6000)          #pause for 6"
+            loop = False
+            return                          #quit the maze
         cl.tick(30)
 
 
@@ -162,6 +182,7 @@ def main_function(window, window_size, maze, init_pos):
 #x_plane, y_plane {float},{float} the 'plane' vector
 #maze {list} the "map" of the maze
 #window_height, window_width {int},{int} the dimension of the screen
+
 def draw(window,
         x_ply, y_ply,
         x_direc, y_direc,
@@ -260,6 +281,10 @@ def draw(window,
         pygame.draw.line(window, color, (i,start_point), (i,end_point), width=1)
     #draw the small circle at the center of the screen
     pygame.draw.circle(window, (200,200,200), (window_width // 2, window_height // 2), 3)
+
+    if dev_mod:
+        window.blit(font_dev.render("x : " + str(round(x_ply,2)), True, (245, 245, 245)), (20,20))
+        window.blit(font_dev.render("y : " + str(round(y_ply,2)), True, (245, 245, 245)), (20,50))
     pygame.display.update()
 
     '''
