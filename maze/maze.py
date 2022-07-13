@@ -129,12 +129,13 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
         #check if the player found the end
         if int(x_ply) == end_pos['x'] and int(y_ply) == end_pos['y']:
-            pygame.time.wait(2000)          #pause for 2"
             pygame.mixer.music.stop()       #stop the music
+            pygame.time.wait(1000)          #pause for 1"
             pygame.mouse.set_visible(True)  #show the cursor
             #show "congratulation" on a blue background
             pygame.Surface.fill(window,(100,130,140))
             window.blit(pygame.font.Font('freesansbold.ttf', 120).render("Congratulation", True, (245, 215, 20)), (window_size[0]//4,window_size[1]//3))
+            window.blit(font.render("You find the exit of the maze !", True, (245, 215, 215)), (window_size[0]//4,window_size[1]//3+140))
             pygame.display.update()
             pygame.time.wait(6000)          #pause for 6"
             loop = False
@@ -242,8 +243,8 @@ def draw(window, x_ply, y_ply, x_direc, y_direc, x_plane, y_plane, maze, window_
     pygame.draw.circle(window, (200,200,200), (window_width // 2, window_height // 2), 3)
 
     if dev_mod:
-        window.blit(font_dev.render("x : " + str(x_ply), True, (245, 245, 245)), (20,20))
-        window.blit(font_dev.render("y : " + str(y_ply), True, (245, 245, 245)), (20,50))
+        window.blit(font_dev.render("x : " + str(round(x_ply,2)), True, (245, 245, 245)), (20,20))
+        window.blit(font_dev.render("y : " + str(round(y_ply,2)), True, (245, 245, 245)), (20,50))
     pygame.display.update()
 
     '''
