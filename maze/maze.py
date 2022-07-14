@@ -7,30 +7,33 @@ from math import cos, sin
 def main_function(window, window_size, maze, init_pos, end_pos):
     #? what does this do?
     #$ it fill the screen with green, it aim to be a 'loading screen', I think it's quite useless tho
+    #WHYNOT: remove it, then?
     pygame.draw.rect(window, (125,255,129), [0, 0, window_size[0], window_size[1]], 0)
     pygame.display.update()
 
     loop = True
     cl = pygame.time.Clock()
 
-
-    #WHYNOT: remove z_ply? it seems unused
-    #$ It's for anticipate a soon use of it,
-    #$ I think it's quite annoying that we cannot move the head up and down
+    #$ NBRET
+        #WHYNOT: remove z_ply? it seems unused
+    #$ eti-du
+        #$ It's for anticipate a soon use of it,
+        #$ I think it's quite annoying that we cannot move the head up and down
+    #$ NBRET
+        #$ got it (=^ ◡ ^=)
     x_ply, y_ply, z_ply = init_pos['x'],init_pos['y'],init_pos['z']   #player's position on the X, Y and Z axes
     x_direc, y_direc = -1, 0                                          #the (x_direc, y_direc) tuple is the player's direction vector
     x_plane, y_plane = 0, 0.66                                        #the straight line normal to (x_direc, y_direc)
 
-    #time,oldtime = 0,0 #? defunct, use FPS instead
-
     speed_mov = 0.03
     speed_turn = 0.002
 
-    #! HOLY MAGIC POWERS, DO NOT TEMPER WITH UNLESS PROPERLY TRAINED
+    #! deep wizardry. do not touch.
     dev_mode = False
 
     font = pygame.font.Font(pygame.font.get_default_font(), 50)
     font_dev = pygame.font.Font(pygame.font.get_default_font(), 20)
+
 
     #? what exactly is the purpose of this thing?
     #? it doesn't seem to change anything when disabled
@@ -43,13 +46,11 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     pygame.mixer.music.load(R"asset\music\ambient_1.ogg")
     pygame.mixer.music.play(loops = 1, start = 0.0, fade_ms = 10000)
 
-    #? i imagine this hides and locks the mouse to the inside of the window?
-    #µ yes it place the mouse to the center and hide it
+    #hides and locks the mouse to the inside of the window
     pygame.mouse.set_pos([window_size[0]//2, window_size[1]//2])
     pygame.mouse.set_visible(False)
 
-    #? i imagine this sets the time needed to repeat an input (e.g. moving forward)?
-    #µ exactly
+    #sets the time needed to repeat an input (e.g. moving forward)
     pygame.key.set_repeat(10)
     pygame.time.delay(1000)
 
@@ -58,9 +59,9 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #? I'm not exactly sure of what was done there.
     #? would be nice of someone to comment this all plz
     while loop:
-        #grab all event and execute the for loop for each event
+        #grabs all events and executes the for loop for each event
         for event in pygame.event.get():
-            #in case the player use the red cross to close the window
+            #in case the player uses the red cross to close the window
             if event.type == pygame.QUIT:
                 loop = False
 
@@ -68,10 +69,13 @@ def main_function(window, window_size, maze, init_pos, end_pos):
                 #removes a wall by left-clicking when in dev mode
                 if dev_mode:
                     i = 0.5
-                    #launch a ray from the player, while there is no walls continu, if the ray hit a wall remove it
+
+                    #casts a ray from the player forward until a collision with a wall is detected
+                    #in case of the latter, said wall is destroyed
                     while i < 10 and maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] == 0:
                         i += 0.1
-                    #check if the wall isn't on the edge
+
+                    #checks if the wall isn't on the edge
                     if 0 < int(y_ply + y_direc*i)<len(maze[0]) - 1 and 0 < int(x_ply + x_direc*i) < len(maze[0][int(y_ply + y_direc*i)]) - 1:
                         maze[0][int(y_ply + y_direc*i)][int(x_ply + x_direc*i)] = 0
 
