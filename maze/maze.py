@@ -1,6 +1,8 @@
 import pygame
 from math import cos, sin
 
+import audio.music as music
+
 
 
 
@@ -43,8 +45,14 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
 
     #plays the ambient music
-    pygame.mixer.music.load(R"asset\music\ambient_1.ogg")
+    """
+    ? Deprecated, see `/audio/music.py` instead
+    pygame.mixer.music.load(R"assets\music\ambient_1.ogg")
     pygame.mixer.music.play(loops = 1, start = 0.0, fade_ms = 10000)
+    """
+    music_queue = music.enqueue_music_tracks(R"assets/music/MundialRonaldinhoSoccer64_intro.mp3",
+                                            R"assets/music/ambient_1.mp3")
+    music.play_queue(music_queue,"standard")
 
     #hides and locks the mouse to the inside of the window
     pygame.mouse.set_pos([window_size[0]//2, window_size[1]//2])
