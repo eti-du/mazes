@@ -106,7 +106,7 @@ class main():
                     pygame.draw.rect(window, (100,130,140), [0, 0, window_size[0], window_size[1]],0)
 
                     #open the file where is locate the default maze
-                    with open("asset\mazes\_default_maze_.json","r") as file:
+                    with open("assets\mazes\_default_maze_.json","r") as file:
                         content = eval(file.read())
 
                     #waiting the player finish the maze
