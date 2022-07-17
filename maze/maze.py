@@ -34,12 +34,13 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     font = pygame.font.Font(pygame.font.get_default_font(), 50)
     font_dev = pygame.font.Font(pygame.font.get_default_font(), 20)
 
+    resolution = 3 #must be at least 1, cannot be greater that window_size[0]
 
     #? what exactly is the purpose of this thing?
     #? it doesn't seem to change anything when disabled
     #$ it was just to show the maze a first time before the list of loading things that take some time
     #$ it allow to give the impression that the game is ready when it's not the case
-    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev)
+    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution)
 
 
     #plays the ambient music
@@ -158,7 +159,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev)
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution)
 
             
 
@@ -194,7 +195,7 @@ def draw(window,
         x_plane, y_plane,
         maze,
         window_height, window_width,
-        dev_mode,font_dev):
+        dev_mode,font_dev,resolution):
 
     from maze.color import color_list
 
@@ -204,10 +205,22 @@ def draw(window,
                     (25,45,125),
                     (0,0, window_width, window_height//2))
 
-    #for every pixel this loop will draw a line.
-    #The length of the line matches the distance from the player to the wall
-    for i in range(window_width):
-        camera_x = 2*i/window_width - 1
+    #for every pixel this loop will draw a line
+    #the length of the line matches the distance from the player to the wall
+    #the 'resolution' match the ray thickness
+    num_of_rays = window_width // resolution
+    for i in range(num_of_rays):
+        """
+        camera_x : the factor of the plane vectors
+        it must be between -1 and 1
+        -1 mean the ray is the first one from the left
+         1 mean the ray is the first one from the right
+        calcul explanation :
+            · (i/num_of_rays) -> gives a number between 0 and 1 of where the ray is among the others,
+            · 2*(x) -> twice the range (from 1 to 2)
+            · x-1 -> move the number of -1
+        """
+        camera_x = 2*i/num_of_rays - 1
 
         #? parentheses added for ease of reading
         raydirec_x, raydirec_y = (x_direc + x_plane*camera_x), (y_direc + y_plane*camera_x)
@@ -224,7 +237,7 @@ def draw(window,
         if raydirec_y != 0:
             ddista_y = abs(1/raydirec_y)
         else:
-            ddista_x = 10**10
+            ddista_y = 10**10
 
         pas_x, pas_y = 0,0
 
@@ -284,7 +297,10 @@ def draw(window,
             color = (color[0] // 2, color[1] // 2, color[2] // 2)
 
 
-        pygame.draw.line(window, color, (i,start_point), (i,end_point), width=1)
+        pygame.draw.line(window, color, (i*resolution,start_point), (i*resolution,end_point), width=int(resolution))
+        if dev_mode:
+            if 2*i == num_of_rays:
+                pygame.draw.line(window, (255,255,255), (i*resolution,start_point), (i*resolution,end_point), width=resolution)
     #draw the small circle at the center of the screen
     pygame.draw.circle(window, (200,200,200), (window_width // 2, window_height // 2), 3)
 
