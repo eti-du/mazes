@@ -25,7 +25,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     x_direc, y_direc = -1, 0                                          #the (x_direc, y_direc) tuple is the player's direction vector
     x_plane, y_plane = 0, 0.66                                        #the straight line normal to (x_direc, y_direc)
 
-    speed_mov = 0.03
+    speed_mov = 0.11
     speed_turn = 0.002
 
     #! deep wizardry. do not touch.
@@ -90,53 +90,54 @@ def main_function(window, window_size, maze, init_pos, end_pos):
                     maze[0][int(y_ply + y_direc * (i-0.1))][int(x_ply + x_direc * (i-0.1))] = 5
 
 
-            #moves the player accordingly when pressing 'Z', 'Q', 'S' or 'D'
-            #? pygame methode event.type only gives one key does that
-            #? but does that mean it only PARSES one key as an arument? or that it only RETURNS one key?
-            #µ it returns only one key
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP or event.key == pygame.K_z:
-                    if maze[0][int(y_ply)][int(x_ply + x_direc*speed_mov)] == 0:
-                        x_ply += x_direc*speed_mov
+        #moves the player accordingly when pressing 'Z', 'Q', 'S' or 'D'
+        #? pygame methode event.type only gives one key does that
+        #? but does that mean it only PARSES one key as an arument? or that it only RETURNS one key?
+        #µ it returns only one key
+        #µ it's done, we can now move in two direction at the same time
+        #µ /!\ this methode seem to be less optimised
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP] or keys[pygame.K_z]:
+            if maze[0][int(y_ply)][int(x_ply + x_direc*speed_mov)] == 0:
+                x_ply += x_direc*speed_mov
 
-                    if maze[0][int(y_ply + y_direc*speed_mov)][int(x_ply)] == 0:
-                        y_ply += y_direc*speed_mov
+            if maze[0][int(y_ply + y_direc*speed_mov)][int(x_ply)] == 0:
+                y_ply += y_direc*speed_mov
 
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            if maze[0][int(y_ply)][int(x_ply + y_direc*speed_mov)] == 0:
+                x_ply += y_direc*(speed_mov*0.5)
 
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    if maze[0][int(y_ply)][int(x_ply + y_direc*speed_mov)] == 0:
-                        x_ply += y_direc*(speed_mov*0.5)
-
-                    if maze[0][int(y_ply - x_direc*speed_mov)][int(x_ply)] == 0:
-                        y_ply -= x_direc*(speed_mov*0.5)
-
-
-
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_q:
-                    if maze[0][int(y_ply)][int(x_ply - y_direc*speed_mov)] == 0:
-                        x_ply -= y_direc*(speed_mov*0.5)
-
-                    if maze[0][int(y_ply + x_direc*speed_mov)][int(x_ply)] == 0:
-                        y_ply += x_direc*(speed_mov*0.5)
+            if maze[0][int(y_ply - x_direc*speed_mov)][int(x_ply)] == 0:
+                y_ply -= x_direc*(speed_mov*0.5)
 
 
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    if maze[0][int(y_ply)][int(x_ply - x_direc*speed_mov)] == 0:
-                        x_ply -= x_direc*speed_mov
+        if keys[pygame.K_LEFT] or keys[pygame.K_q]:
+            if maze[0][int(y_ply)][int(x_ply - y_direc*speed_mov)] == 0:
+                x_ply -= y_direc*(speed_mov*0.5)
 
-                    if maze[0][int(y_ply - y_direc*speed_mov)][int(x_ply)] == 0:
-                        y_ply -= y_direc*speed_mov
+            if maze[0][int(y_ply + x_direc*speed_mov)][int(x_ply)] == 0:
+                y_ply += x_direc*(speed_mov*0.5)
+
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            if maze[0][int(y_ply)][int(x_ply - x_direc*speed_mov)] == 0:
+                x_ply -= x_direc*speed_mov
+
+            if maze[0][int(y_ply - y_direc*speed_mov)][int(x_ply)] == 0:
+                y_ply -= y_direc*speed_mov
 
 
-                if event.key == pygame.K_ESCAPE:
-                    loop = False
+        if keys[pygame.K_ESCAPE]:
+            loop = False
 
-                if not dev_mode and event.key == pygame.K_F7:
-                    dev_mode = True
-                    print("DEV MODE STATUS\t:\tACTIVATED\nOBJECTIVE\t:\tKILL")
-                elif dev_mode and event.key == pygame.K_F7:
-                    dev_mode = False
-                    print("DEV MODE STATUS\t:\tDEACTIVATED")
+        if not dev_mode and keys[pygame.K_F7]:
+            dev_mode = True
+            print("DEV MODE STATUS\t:\tACTIVATED\nOBJECTIVE\t:\tKILL")
+            pygame.time.wait(500) #avoid to redeactivate the dev_mode yet the button is still pressed
+        elif dev_mode and keys[pygame.K_F7]:
+            dev_mode = False
+            print("DEV MODE STATUS\t:\tDEACTIVATED")
+            pygame.time.wait(500)
 
 
 
