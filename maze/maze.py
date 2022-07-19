@@ -22,8 +22,9 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #$ NBRET
         #$ got it (=^ ◡ ^=)
     x_ply, y_ply, z_ply = init_pos['x'],init_pos['y'],init_pos['z']   #player's position on the X, Y and Z axes
-    x_direc, y_direc = -1, 0                                          #the (x_direc, y_direc) tuple is the player's direction vector
-    x_plane, y_plane = 0, 0.66                                        #the straight line normal to (x_direc, y_direc)
+    x_direc, y_direc, z_direc = 1, 0, 0                               #the (x_direc, y_direc) tuple is the player's direction vector
+    x_plane, y_plane, z_plane = 0, -0.66, 0                                     #the straight line normal to (x_direc, y_direc)
+    z_axis = 0
 
     speed_mov = 0.11
     speed_turn = 0.002
@@ -40,7 +41,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #? it doesn't seem to change anything when disabled
     #$ it was just to show the maze a first time before the list of loading things that take some time
     #$ it allow to give the impression that the game is ready when it's not the case
-    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution)
+    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution,z_axis)
 
 
     #plays the ambient music
@@ -143,6 +144,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
         mouse_mov = pygame.mouse.get_pos()
         x_mouse_mov = mouse_mov[0] - window_size[0]//2
+        y_mouse_mov = mouse_mov[1] - window_size[1]//2
 
         #turn the direction of the player when the mouse is moved
         temp = x_direc
@@ -154,13 +156,24 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         x_plane = x_plane*cos(-speed_turn*x_mouse_mov) - y_plane*sin(-speed_turn*x_mouse_mov)
         y_plane = temp*sin(-speed_turn*x_mouse_mov) + y_plane*cos(-speed_turn*x_mouse_mov)
 
+        z_axis -= y_mouse_mov * speed_turn * 1000
+        '''
+        temp = y_direc
+        x_direc = x_direc*cos(-speed_turn*x_mouse_mov) - y_direc*sin(-speed_turn*x_mouse_mov)
+        y_direc = temp*sin(-speed_turn*x_mouse_mov) + y_direc*cos(-speed_turn*x_mouse_mov)
+
+        #turn the 'plane' vector
+        temp = y_plane
+        x_plane = x_plane*cos(-speed_turn*x_mouse_mov) - y_plane*sin(-speed_turn*x_mouse_mov)
+        y_plane = temp*sin(-speed_turn*x_mouse_mov) + y_plane*cos(-speed_turn*x_mouse_mov)'''
+
         #? i imagine this hides and locks the mouse to the inside of the window?
         #µ the mouse is already hide with the instruction line 49
         #µ the player can still move the mouse to move its direction
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution)
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution,z_axis)
 
             
 
@@ -196,7 +209,7 @@ def draw(window,
         x_plane, y_plane,
         maze,
         window_height, window_width,
-        dev_mode,font_dev,resolution):
+        dev_mode,font_dev,resolution,z_axis):
 
     from maze.color import color_list
 
@@ -204,7 +217,7 @@ def draw(window,
     pygame.Surface.fill(window,(0,0,0))#floor
     pygame.draw.rect(window,
                     (25,45,125),
-                    (0,0, window_width, window_height//2))
+                    (0,0, window_width, window_height//2+z_axis))
 
     #for every pixel this loop will draw a line
     #the length of the line matches the distance from the player to the wall
@@ -281,12 +294,12 @@ def draw(window,
         else:
             height_line = window_height / wall_distance
         
-        #calcul where the wall should begin on the screen
-        start_point = -height_line / 2 + window_height / 2
+        #calcul where the wall should begin and end on the screen
+        start_point = -height_line / 2 + window_height / 2 + z_axis
+        end_point = height_line / 2 + window_height / 2 + z_axis
+
         if start_point < 1:
             start_point = 1
-        end_point = height_line / 2 + window_height / 2
-
         #the line to draw must not be longer than the screen
         if end_point >= window_height:
             end_point = window_height - 1
