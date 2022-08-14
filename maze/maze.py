@@ -1,4 +1,4 @@
-import pygame
+import pygame,time
 from math import cos, sin
 
 
@@ -12,7 +12,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     pygame.display.update()
 
     loop = True
-    cl = pygame.time.Clock()
+    #cl = pygame.time.Clock()
 
     #$ NBRET
         #WHYNOT: remove z_ply? it seems unused
@@ -22,11 +22,12 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     #$ NBRET
         #$ got it (=^ ◡ ^=)
     x_ply, y_ply, z_ply = init_pos['x'],init_pos['y'],init_pos['z']   #player's position on the X, Y and Z axes
-    x_direc, y_direc = -1, 0                                          #the (x_direc, y_direc) tuple is the player's direction vector
-    x_plane, y_plane = 0, 0.66                                        #the straight line normal to (x_direc, y_direc)
+    x_direc, y_direc, z_direc = 1, 0, 0                               #the (x_direc, y_direc) tuple is the player's direction vector
+    x_plane, y_plane, z_plane = 0, -0.66, 0                           #the straight line normal to (x_direc, y_direc)
+    z_axis = 0
 
-    speed_mov = 0.11
-    speed_turn = 0.002
+    speed_mov = 3
+    speed_turn = 0.04
 
     #! deep wizardry. do not touch.
     dev_mode = False
@@ -34,14 +35,17 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     font = pygame.font.Font(pygame.font.get_default_font(), 50)
     font_dev = pygame.font.Font(pygame.font.get_default_font(), 20)
 
-    resolution = 3 #must be at least 1, cannot be greater that window_size[0]
+    resolution = 2 #must be at least 1, cannot be greater that window_size[0]
+    fps = 0        #frame per second
 
     #? what exactly is the purpose of this thing?
     #? it doesn't seem to change anything when disabled
     #$ it was just to show the maze a first time before the list of loading things that take some time
     #$ it allow to give the impression that the game is ready when it's not the case
-    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution)
+    draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution,z_axis,fps)
 
+    frametime = 1
+    new_time = 1
 
     #plays the ambient music
     pygame.mixer.music.load(R"asset\music\ambient_1.ogg")
@@ -98,33 +102,33 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         #µ /!\ this methode seem to be less optimised
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] or keys[pygame.K_z]:
-            if maze[0][int(y_ply)][int(x_ply + x_direc*speed_mov)] == 0:
-                x_ply += x_direc*speed_mov
+            if maze[0][int(y_ply)][int(x_ply + x_direc*speed_mov*frametime)] == 0:
+                x_ply += x_direc*speed_mov*frametime
 
-            if maze[0][int(y_ply + y_direc*speed_mov)][int(x_ply)] == 0:
-                y_ply += y_direc*speed_mov
+            if maze[0][int(y_ply + y_direc*speed_mov*frametime)][int(x_ply)] == 0:
+                y_ply += y_direc*speed_mov*frametime
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            if maze[0][int(y_ply)][int(x_ply + y_direc*speed_mov)] == 0:
-                x_ply += y_direc*(speed_mov*0.5)
+            if maze[0][int(y_ply)][int(x_ply + y_direc*speed_mov*frametime)] == 0:
+                x_ply += y_direc*(speed_mov*0.5)*frametime
 
-            if maze[0][int(y_ply - x_direc*speed_mov)][int(x_ply)] == 0:
-                y_ply -= x_direc*(speed_mov*0.5)
+            if maze[0][int(y_ply - x_direc*speed_mov*frametime)][int(x_ply)] == 0:
+                y_ply -= x_direc*(speed_mov*0.5)*frametime
 
 
         if keys[pygame.K_LEFT] or keys[pygame.K_q]:
-            if maze[0][int(y_ply)][int(x_ply - y_direc*speed_mov)] == 0:
-                x_ply -= y_direc*(speed_mov*0.5)
+            if maze[0][int(y_ply)][int(x_ply - y_direc*speed_mov*frametime)] == 0:
+                x_ply -= y_direc*(speed_mov*0.5)*frametime
 
-            if maze[0][int(y_ply + x_direc*speed_mov)][int(x_ply)] == 0:
-                y_ply += x_direc*(speed_mov*0.5)
+            if maze[0][int(y_ply + x_direc*speed_mov*frametime)][int(x_ply)] == 0:
+                y_ply += x_direc*(speed_mov*0.5)*frametime
 
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            if maze[0][int(y_ply)][int(x_ply - x_direc*speed_mov)] == 0:
-                x_ply -= x_direc*speed_mov
+            if maze[0][int(y_ply)][int(x_ply - x_direc*speed_mov*frametime)] == 0:
+                x_ply -= x_direc*speed_mov*frametime
 
-            if maze[0][int(y_ply - y_direc*speed_mov)][int(x_ply)] == 0:
-                y_ply -= y_direc*speed_mov
+            if maze[0][int(y_ply - y_direc*speed_mov*frametime)][int(x_ply)] == 0:
+                y_ply -= y_direc*speed_mov*frametime
 
 
         if keys[pygame.K_ESCAPE]:
@@ -133,6 +137,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         if not dev_mode and keys[pygame.K_F7]:
             dev_mode = True
             print("DEV MODE STATUS\t:\tACTIVATED\nOBJECTIVE\t:\tKILL")
+            pygame.mixer.music.set_volume(0.1)
             pygame.time.wait(500) #avoid to redeactivate the dev_mode yet the button is still pressed
         elif dev_mode and keys[pygame.K_F7]:
             dev_mode = False
@@ -143,16 +148,32 @@ def main_function(window, window_size, maze, init_pos, end_pos):
 
         mouse_mov = pygame.mouse.get_pos()
         x_mouse_mov = mouse_mov[0] - window_size[0]//2
+        y_mouse_mov = mouse_mov[1] - window_size[1]//2
 
         #turn the direction of the player when the mouse is moved
         temp = x_direc
+        x_direc = x_direc*cos(-speed_turn*x_mouse_mov*frametime) - y_direc*sin(-speed_turn*x_mouse_mov*frametime)
+        y_direc = temp*sin(-speed_turn*x_mouse_mov*frametime) + y_direc*cos(-speed_turn*x_mouse_mov*frametime)
+
+        #turn the 'plane' vector
+        temp = x_plane
+        x_plane = x_plane*cos(-speed_turn*x_mouse_mov*frametime) - y_plane*sin(-speed_turn*x_mouse_mov*frametime)
+        y_plane = temp*sin(-speed_turn*x_mouse_mov*frametime) + y_plane*cos(-speed_turn*x_mouse_mov*frametime)
+
+        z_axis -= y_mouse_mov * speed_turn *frametime*500
+        if z_axis > 500:
+            z_axis = 500
+        elif z_axis < -500:
+            z_axis = -500
+        '''
+        temp = y_direc
         x_direc = x_direc*cos(-speed_turn*x_mouse_mov) - y_direc*sin(-speed_turn*x_mouse_mov)
         y_direc = temp*sin(-speed_turn*x_mouse_mov) + y_direc*cos(-speed_turn*x_mouse_mov)
 
         #turn the 'plane' vector
-        temp = x_plane
+        temp = y_plane
         x_plane = x_plane*cos(-speed_turn*x_mouse_mov) - y_plane*sin(-speed_turn*x_mouse_mov)
-        y_plane = temp*sin(-speed_turn*x_mouse_mov) + y_plane*cos(-speed_turn*x_mouse_mov)
+        y_plane = temp*sin(-speed_turn*x_mouse_mov) + y_plane*cos(-speed_turn*x_mouse_mov)'''
 
         #? i imagine this hides and locks the mouse to the inside of the window?
         #µ the mouse is already hide with the instruction line 49
@@ -160,7 +181,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         pygame.mouse.set_pos([window_size[0]//2,window_size[1]//2])
 
 
-        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution)
+        draw(window,x_ply,y_ply,x_direc,y_direc,x_plane,y_plane,maze,window_size[1],window_size[0],dev_mode,font_dev,resolution,z_axis,fps)
 
             
 
@@ -177,7 +198,12 @@ def main_function(window, window_size, maze, init_pos, end_pos):
             pygame.time.wait(6000)          #pause for 6"
             loop = False
             return                          #quit the maze
-        cl.tick(30)
+        old_time = new_time
+        new_time = time.time()
+        frametime = new_time-old_time
+        fps = 1/frametime
+        time.sleep(0.05)
+        #cl.tick(30)
 
 
 
@@ -196,7 +222,7 @@ def draw(window,
         x_plane, y_plane,
         maze,
         window_height, window_width,
-        dev_mode,font_dev,resolution):
+        dev_mode,font_dev,resolution,z_axis,fps):
 
     from maze.color import color_list
 
@@ -204,7 +230,7 @@ def draw(window,
     pygame.Surface.fill(window,(0,0,0))#floor
     pygame.draw.rect(window,
                     (25,45,125),
-                    (0,0, window_width, window_height//2))
+                    (0,0, window_width, window_height//2+z_axis))
 
     #for every pixel this loop will draw a line
     #the length of the line matches the distance from the player to the wall
@@ -281,15 +307,15 @@ def draw(window,
         else:
             height_line = window_height / wall_distance
         
-        #calcul where the wall should begin on the screen
-        start_point = -height_line / 2 + window_height / 2
+        #calcul where the wall should begin and end on the screen
+        start_point = -height_line / 2 + window_height / 2 + z_axis
+        end_point = height_line / 2 + window_height / 2 + z_axis
+
         if start_point < 1:
             start_point = 1
-        end_point = height_line / 2 + window_height / 2
-
         #the line to draw must not be longer than the screen
-        if end_point >= window_height:
-            end_point = window_height - 1
+        #if end_point >= window_height:
+        #    end_point = window_height - 1
         #select the color according to the number on the maze list
         color = color_list[maze[0][map_y][map_x]-1]
 
@@ -308,33 +334,5 @@ def draw(window,
     if dev_mode:
         window.blit(font_dev.render("x : " + str(round(x_ply,2)), True, (245, 245, 245)), (20,20))
         window.blit(font_dev.render("y : " + str(round(y_ply,2)), True, (245, 245, 245)), (20,50))
+        window.blit(font_dev.render("fps : " + str(int(fps)), True, (245, 245, 245)), (20,80))
     pygame.display.update()
-
-    '''
-This is the first try and without raycasting !
-It doesn't work but look good so I keep it.
-Maybe it will be used for the start menu.
-
-def draw(window,window_size,x_plus,y_plus,x_rect_size,y_rect_size,x_ply):
-    dr = pygame.draw
-    x_mdl = window_size[0]//2
-    y_mdl = window_size[1]//2
-    x_max = window_size[0]
-    y_max = window_size[1]
-    pygame.Surface.fill(window,(100,130,140))
-    dr.line(window,(0,0,0),(0,0),(x_mdl-(x_rect_size)+x_plus,y_mdl-(y_rect_size-y_plus)))
-    dr.line(window,(0,0,0),(x_max,0),(x_mdl+x_rect_size+x_plus,y_mdl-y_rect_size+y_plus))
-    dr.line(window,(0,0,0),(0,y_max),(x_mdl-x_rect_size+x_plus,y_mdl+y_rect_size+y_plus))
-    dr.line(window,(0,0,0),(x_max,y_max),(x_mdl+x_rect_size+x_plus,y_mdl+y_rect_size+y_plus))
-    dr.rect(window,(45,45,45),(x_mdl-x_rect_size+x_plus,y_mdl-y_rect_size+y_plus,2*x_rect_size,2*y_rect_size))
-    a = (y_mdl-(y_rect_size-y_plus)) / (x_mdl-x_rect_size+x_plus)
-    f_x = 50-x_ply*4
-    f_y = 25
-    g_x = 50-x_ply
-    g_y = y_max-25
-    ad = ((x_mdl-(x_rect_size)+x_plus-0)**2+(y_mdl-(y_rect_size-y_plus)-0)**2)**0.5
-    ab = y_max * ad / y_rect_size
-    dr.line(window,(0,0,0),(f_x,f_x*a),(g_x,window_size[1]-g_x*a))
-    pygame.display.update()
-
-    '''
