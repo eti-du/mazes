@@ -35,12 +35,8 @@ Thanks to all the contributer : eti-du, and now with NBRET-TOUCH-WASH ( =①ω�
 _____________________________
 
 """
-
-
-
 #& made the text and lines centered in relaion to each other
 print('{}\n\n\t'.format("_" * 89),
     "The files and folders of this directory are important. Don't delete them",
     '\n{}'.format("_" *89))
-
-#import maze.main #µ unused: to be removed?
+import maze.main
