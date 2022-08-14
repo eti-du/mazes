@@ -161,6 +161,10 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         y_plane = temp*sin(-speed_turn*x_mouse_mov*frametime) + y_plane*cos(-speed_turn*x_mouse_mov*frametime)
 
         z_axis -= y_mouse_mov * speed_turn *frametime*500
+        if z_axis > 500:
+            z_axis = 500
+        elif z_axis < -500:
+            z_axis = -500
         '''
         temp = y_direc
         x_direc = x_direc*cos(-speed_turn*x_mouse_mov) - y_direc*sin(-speed_turn*x_mouse_mov)
