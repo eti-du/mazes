@@ -23,7 +23,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         #$ got it (=^ ◡ ^=)
     x_ply, y_ply, z_ply = init_pos['x'],init_pos['y'],init_pos['z']   #player's position on the X, Y and Z axes
     x_direc, y_direc, z_direc = 1, 0, 0                               #the (x_direc, y_direc) tuple is the player's direction vector
-    x_plane, y_plane, z_plane = 0, -0.66, 0                                     #the straight line normal to (x_direc, y_direc)
+    x_plane, y_plane, z_plane = 0, -0.66, 0                           #the straight line normal to (x_direc, y_direc)
     z_axis = 0
 
     speed_mov = 3
@@ -35,8 +35,8 @@ def main_function(window, window_size, maze, init_pos, end_pos):
     font = pygame.font.Font(pygame.font.get_default_font(), 50)
     font_dev = pygame.font.Font(pygame.font.get_default_font(), 20)
 
-    resolution = 3 #must be at least 1, cannot be greater that window_size[0]
-    fps = 0
+    resolution = 2 #must be at least 1, cannot be greater that window_size[0]
+    fps = 0        #frame per second
 
     #? what exactly is the purpose of this thing?
     #? it doesn't seem to change anything when disabled
@@ -137,6 +137,7 @@ def main_function(window, window_size, maze, init_pos, end_pos):
         if not dev_mode and keys[pygame.K_F7]:
             dev_mode = True
             print("DEV MODE STATUS\t:\tACTIVATED\nOBJECTIVE\t:\tKILL")
+            pygame.mixer.music.set_volume(0.1)
             pygame.time.wait(500) #avoid to redeactivate the dev_mode yet the button is still pressed
         elif dev_mode and keys[pygame.K_F7]:
             dev_mode = False
@@ -309,8 +310,8 @@ def draw(window,
         if start_point < 1:
             start_point = 1
         #the line to draw must not be longer than the screen
-        if end_point >= window_height:
-            end_point = window_height - 1
+        #if end_point >= window_height:
+        #    end_point = window_height - 1
         #select the color according to the number on the maze list
         color = color_list[maze[0][map_y][map_x]-1]
 
@@ -331,32 +332,3 @@ def draw(window,
         window.blit(font_dev.render("y : " + str(round(y_ply,2)), True, (245, 245, 245)), (20,50))
         window.blit(font_dev.render("fps : " + str(int(fps)), True, (245, 245, 245)), (20,80))
     pygame.display.update()
-
-    '''
-This is the first try and without raycasting !
-It doesn't work but look good so I keep it.
-Maybe it will be used for the start menu.
-
-def draw(window,window_size,x_plus,y_plus,x_rect_size,y_rect_size,x_ply):
-    dr = pygame.draw
-    x_mdl = window_size[0]//2
-    y_mdl = window_size[1]//2
-    x_max = window_size[0]
-    y_max = window_size[1]
-    pygame.Surface.fill(window,(100,130,140))
-    dr.line(window,(0,0,0),(0,0),(x_mdl-(x_rect_size)+x_plus,y_mdl-(y_rect_size-y_plus)))
-    dr.line(window,(0,0,0),(x_max,0),(x_mdl+x_rect_size+x_plus,y_mdl-y_rect_size+y_plus))
-    dr.line(window,(0,0,0),(0,y_max),(x_mdl-x_rect_size+x_plus,y_mdl+y_rect_size+y_plus))
-    dr.line(window,(0,0,0),(x_max,y_max),(x_mdl+x_rect_size+x_plus,y_mdl+y_rect_size+y_plus))
-    dr.rect(window,(45,45,45),(x_mdl-x_rect_size+x_plus,y_mdl-y_rect_size+y_plus,2*x_rect_size,2*y_rect_size))
-    a = (y_mdl-(y_rect_size-y_plus)) / (x_mdl-x_rect_size+x_plus)
-    f_x = 50-x_ply*4
-    f_y = 25
-    g_x = 50-x_ply
-    g_y = y_max-25
-    ad = ((x_mdl-(x_rect_size)+x_plus-0)**2+(y_mdl-(y_rect_size-y_plus)-0)**2)**0.5
-    ab = y_max * ad / y_rect_size
-    dr.line(window,(0,0,0),(f_x,f_x*a),(g_x,window_size[1]-g_x*a))
-    pygame.display.update()
-
-    '''
