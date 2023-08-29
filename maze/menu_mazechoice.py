@@ -23,11 +23,11 @@ def ui_mazechoice(window, window_size):
 
     cl = pygame.time.Clock()
 
-    #take all files locate in the asset/mazes directory
-    for files in os.listdir(os.path.join(os.getcwd(),"asset\mazes")):
+    #take all files locate in the assets/mazes directory
+    for files in os.listdir(os.path.join(os.getcwd(),"assets\mazes")):
         if files.endswith(".json"):
 
-            with open(os.path.join(os.path.join(os.getcwd(),"asset\mazes"),files),"r") as file:
+            with open(os.path.join(os.path.join(os.getcwd(),"assets\mazes"),files),"r") as file:
                 fileslist.append(mazefile(file.read()))
 
     #show the list on the screen
